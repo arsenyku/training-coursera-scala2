@@ -64,8 +64,19 @@ class BloxorzSuite extends FunSuite {
     }
   }
 
+  test("done function level 1")
+  {
+    new Level1 {
+      assert(!done(Block(Pos(0,0), Pos(0,0))), "(0,0), (0,1)")
+      assert(!done(Block(Pos(1,1), Pos(1,1))), "(1,1), (1,1)") // start
+      assert(done(Block(Pos(4,7), Pos(4,7))), "(4,7), (4,7)") // goal
+      assert(!done(Block(Pos(4,7), Pos(5,7))), "(4,7), (4,7)") // half on goal
+      assert(!done(Block(Pos(4,6), Pos(4,7))), "(4,7), (4,7)") // half on goal
+    }
+  }
 
-	test("optimal solution for level 1") {
+
+  test("optimal solution for level 1") {
     new Level1 {
       assert(solve(solution) == Block(goal, goal))
     }
