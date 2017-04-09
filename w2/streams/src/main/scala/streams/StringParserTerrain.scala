@@ -68,7 +68,16 @@ trait StringParserTerrain extends GameDef {
    * Hint: you can use the functions `indexWhere` and / or `indexOf` of the
    * `Vector` class
    */
-  def findChar(c: Char, levelVector: Vector[Vector[Char]]): Pos = ???
+  def findChar(c: Char, levelVector: Vector[Vector[Char]]): Pos =
+  {
+    (for
+    {
+      row <- 0 until levelVector.length
+      col = levelVector(row).indexOf(c)
+      if (col >= 0)
+      p = Pos(row, col)
+    } yield p).head
+  }
 
   private lazy val vector: Vector[Vector[Char]] =
     Vector(level.split("\n").map(str => Vector(str: _*)): _*)
