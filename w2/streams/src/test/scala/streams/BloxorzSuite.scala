@@ -70,11 +70,43 @@ class BloxorzSuite extends FunSuite {
       assert(!done(Block(Pos(0,0), Pos(0,0))), "(0,0), (0,1)")
       assert(!done(Block(Pos(1,1), Pos(1,1))), "(1,1), (1,1)") // start
       assert(done(Block(Pos(4,7), Pos(4,7))), "(4,7), (4,7)") // goal
-      assert(!done(Block(Pos(4,7), Pos(5,7))), "(4,7), (4,7)") // half on goal
-      assert(!done(Block(Pos(4,6), Pos(4,7))), "(4,7), (4,7)") // half on goal
+      assert(!done(Block(Pos(4,7), Pos(5,7))), "(4,7), (5,7)") // half on goal
+      assert(!done(Block(Pos(4,6), Pos(4,7))), "(4,6), (4,7)") // half on goal
     }
   }
 
+  test("neighborsWithHistory level 1")
+  {
+    new Level1 {
+      val expected = Set(
+        (Block(Pos(1,2),Pos(1,3)), List(Right,Left,Up)),
+        (Block(Pos(2,1),Pos(3,1)), List(Down,Left,Up))
+      )
+      val nwh = neighborsWithHistory(Block(Pos(1,1),Pos(1,1)), List(Left,Up)).toSet
+
+      assert( nwh === expected )
+    }
+  }
+
+  test("new neighbors only level 1")
+  {
+    new Level1 {
+      val expected =  Set(
+        (Block(Pos(2,1),Pos(3,1)), List(Down,Left,Up))
+      )
+
+      val nno = newNeighborsOnly(
+        Set(
+          (Block(Pos(1,2),Pos(1,3)), List(Right,Left,Up)),
+          (Block(Pos(2,1),Pos(3,1)), List(Down,Left,Up))
+        ).toStream,
+
+        Set(Block(Pos(1,2),Pos(1,3)), Block(Pos(1,1),Pos(1,1)))
+      ).toSet
+
+      assert( nno === expected )
+    }
+  }
 
   test("optimal solution for level 1") {
     new Level1 {
