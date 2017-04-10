@@ -77,16 +77,22 @@ trait Solver extends GameDef {
   def from(initial: Stream[(Block, List[Move])],
            explored: Set[Block]): Stream[(Block, List[Move])] =
   {
-    lazy val neighbors = (for
+    if (initial.isEmpty) Stream.empty
+    else
     {
-      (block, moves) <- initial
-      newNeighbors = newNeighborsOnly(neighborsWithHistory(block, moves), explored)
-      if newNeighbors.nonEmpty
-    } yield newNeighbors).flatten
+      lazy val neighbors = (for
+      {
+        (block, moves) <- initial
+        newNeighbors = newNeighborsOnly(neighborsWithHistory(block, moves), explored)
+        if newNeighbors.nonEmpty
+      } yield newNeighbors).flatten
 
-    lazy val newExplored = neighbors.map({ case (b,_) => b })
+      lazy val newExplored = neighbors.map({ case (b,_) => b })
 
-    initial #::: from(neighbors, explored union newExplored.toSet)
+      initial #::: from(neighbors, explored union newExplored.toSet)
+
+    }
+
   }
 
   /**
@@ -113,5 +119,5 @@ trait Solver extends GameDef {
    * the first move that the player should perform from the starting
    * position.
    */
-  lazy val solution: List[Move] = pathsToGoal.head._2
+  lazy val solution: List[Move] = if (pathsToGoal.nonEmpty) pathsToGoal.head._2 else List()
 }
