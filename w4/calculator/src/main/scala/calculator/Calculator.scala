@@ -15,19 +15,7 @@ object Calculator {
     {
       (name, expression) <- namedExpressions
       result = Signal( eval(expression(), namedExpressions) )
-//      result = resultSignal(name, expression, namedExpressions)
-//      result = Signal( eval(expression(), Map(name -> expression)) )
     } yield name -> result
-  }
-
-  def resultSignal(name:String, expression:Signal[Expr], references:Map[String, Signal[Expr]]): Signal[Double] =
-  {
-
-    val cyclic = isCyclic( expression(), references, Set() )
-    if (cyclic) Signal(Double.NaN)
-    else Signal( eval(expression(), Map(name -> expression)) )
-
-//    resultSignal = Signal( eval(expression(), Map(name -> expression)) )
   }
 
   def eval(expr: Expr, references: Map[String, Signal[Expr]]): Double = evalExpr(expr, references, Set())
@@ -57,20 +45,4 @@ object Calculator {
     }
   }
 
-  private def isCyclic(expr:Expr, references: Map[String, Signal[Expr]], names:Set[String]):Boolean =
-  {
-    expr match
-    {
-      case Literal(v) => false
-      case Ref(n) =>
-      {
-        if (names contains n) true
-        else isCyclic(references(n)(), references, names + n)
-      }
-      case Plus(a,b) => isCyclic(a, references, names) || isCyclic(b, references, names)
-      case Minus(a,b) => isCyclic(a, references, names) || isCyclic(b, references, names)
-      case Times(a,b) => isCyclic(a, references, names) || isCyclic(b, references, names)
-      case Divide(a,b) => isCyclic(a, references, names) || isCyclic(b, references, names)
-    }
-  }
 }
